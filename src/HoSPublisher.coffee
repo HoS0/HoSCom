@@ -32,7 +32,7 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
 
         send: (paylaod, destination, headers, isReplyNeeded)->
             return new Promise (fullfil, reject)=>
-                sendOption = {messageId: uuid.v1(), timestamp: Date.now(), headers: headers}
+                sendOption = {messageId: uuid.v1(), timestamp: Date.now(), headers: headers, contentType: 'application/json'}
                 destinationParts = destination.split '.'
                 destService = destinationParts[0]
                 sendOption.correlationId = sendOption.messageId

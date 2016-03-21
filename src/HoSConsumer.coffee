@@ -69,7 +69,7 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
             if @_processRepliedMessage msg
                 return
 
-            if msg.content # TODO specify content type (JSON) on publisher and check here the type
+            if msg.properties.contentType is 'application/json' and msg.content
                 msg.content = JSON.parse msg.content
 
             msg.reply = (payload)=>
