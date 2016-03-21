@@ -32,7 +32,7 @@ or when initializing the service pass as input argument: `HoSService = new HosCo
 `connect()` return a promise for getting connected into HoS environment. after initialization you can send message to other services:
 
 ``` coffee-script
-ok = HoSService.sendMessage {foo: "bar"} , "ServiceName", {task: 'TaskName', method: 'METHOD'}
+ok = HoSService.sendMessage {foo: "1"} , "ServiceName", {task: 'TaskName', method: 'METHOD'}
 ```
 
 by default by sending message HoSCom will assume you expect to get a response back in case you do not need a reply you can specify by passing `false` as the last argument of `sendMessage`, `sendMessage` returns a promise which contain the reply message if successful and error in `catch` if the request failed
@@ -49,6 +49,16 @@ and according to your service contract `HoSCom` will emit the incoming message e
 ``` coffee-script
 HoSService.on 'TaskName.METHOD', (msg)=>
 ```
+
+A message should be replied or rejected, ether with content or without content(in which case the reply won't be send to requester but just allows the HoSCom to acknowledge the message and free service queue in rabbitMQ)
+
+``` coffee-script
+msg.content.foo = msg.content.foo + 1
+msg.reply(msg.content)
+```
+
+message can be rejected `msg.reject('internal issue', 501)` default value for error code is `500`.
+
 
 ## Running Tests
 
