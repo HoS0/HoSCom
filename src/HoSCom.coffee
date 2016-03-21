@@ -58,5 +58,3 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                 return
 
             msg.reject("this service is not offering the following task.", 404)
-
-    return HoSCom
