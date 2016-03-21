@@ -4,8 +4,8 @@ Promise         = require('bluebird')
 crypto          = require('crypto')
 
 amqpurl     = process.env.AMQP_URL ? "localhost"
-username    = process.env.AMQP_USERNAME ? "alikh"
-password    = process.env.AMQP_PASSWORD ? "alikh12358"
+username    = process.env.AMQP_USERNAME ? "guest"
+password    = process.env.AMQP_PASSWORD ? "guest"
 
 describe "Create service", ()->
     it "and it should create 10 instances of hos and destroy them", (done)->

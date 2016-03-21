@@ -2,8 +2,8 @@ generalContract = require('./serviceContract')
 HosCom          = require('../index')
 
 amqpurl     = process.env.AMQP_URL ? "localhost"
-username    = process.env.AMQP_USERNAME ? "alikh"
-password    = process.env.AMQP_PASSWORD ? "alikh12358"
+username    = process.env.AMQP_USERNAME ? "guest"
+password    = process.env.AMQP_PASSWORD ? "guest"
 
 @serviceCon = JSON.parse(JSON.stringify(generalContract))
 @serviceCon.name = "service4Test"
