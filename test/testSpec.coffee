@@ -60,10 +60,10 @@ describe "Create service", ()->
         @service1.connect().then ()=>
             @service2.connect().then ()=>
                 @service2.sendMessage({foo: "bar"} , @serviceCon.name, {task: 'users', method: 'GET'}).then (replyPayload)=>
-                    if replyPayload.foo is 'notbar'
-                        @service2.destroy()
-                        @service1.destroy()
-                        done()
+                    expect(replyPayload.foo).toEqual('notbar');
+                    @service2.destroy()
+                    @service1.destroy()
+                    done()
 
         @service1.on 'users.GET', (msg)=>
             msg.reply({foo: "notbar"})
@@ -81,10 +81,10 @@ describe "Create service", ()->
         @service1.connect().then ()=>
             @service2.connect().then ()=>
                 @service2.sendMessage({foo: 1} , @serviceCon.name, {task: 'users', method: 'GET'}).then (replyPayload)=>
-                    if replyPayload.foo is 2
-                        @service2.destroy()
-                        @service1.destroy()
-                        done()
+                    expect(replyPayload.foo).toEqual(2);
+                    @service2.destroy()
+                    @service1.destroy()
+                    done()
 
         @service1.on 'users.GET', (msg)=>
             msg.content.foo = msg.content.foo + 1
@@ -102,10 +102,10 @@ describe "Create service", ()->
         @service1.connect().then ()=>
             @service2.connect().then ()=>
                 @service2.sendMessage({} , @serviceCon.name, {task: 'contract', method: 'GET'}).then (replyPayload)=>
-                    if JSON.stringify replyPayload is JSON.stringify @serviceCon
-                        @service2.destroy()
-                        @service1.destroy()
-                        done()
+                    expect(JSON.stringify replyPayload).toEqual(JSON.stringify @serviceCon);
+                    @service2.destroy()
+                    @service1.destroy()
+                    done()
 
     it "and get an error on reply for non-existence task", (done)->
         @serviceCon = JSON.parse(JSON.stringify(generalContract))
@@ -122,10 +122,10 @@ describe "Create service", ()->
                 .then (replyPayload)=>
                     console.log replyPayload
                 .catch (error)=>
-                    if error and error.code is 404
-                        @service2.destroy()
-                        @service1.destroy()
-                        done()
+                    expect(error.code).toEqual(404);
+                    @service2.destroy()
+                    @service1.destroy()
+                    done()
 
     it "and it sends a message reject in for internal reason", (done)->
         @serviceCon = JSON.parse(JSON.stringify(generalContract))
@@ -142,10 +142,11 @@ describe "Create service", ()->
                 .then (replyPayload)=>
                     console.log replyPayload
                 .catch (error)=>
-                    if error and error.code is 501 and error.reason is 'internal issue'
-                        @service2.destroy()
-                        @service1.destroy()
-                        done()
+                    expect(error.code).toEqual(501);
+                    expect(error.reason).toEqual('internal issue');
+                    @service2.destroy()
+                    @service1.destroy()
+                    done()
 
         @service1.on 'users.GET', (msg)=>
             msg.content.foo = msg.content.foo + 1
