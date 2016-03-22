@@ -7,7 +7,7 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
         _serviceId: null
         Publisher: null
 
-        constructor: (@_serviceContract, @amqpurl = process.env.AMQP_URL, @username = process.env.AMQP_USERNAME, @password = process.env.AMQP_PASSWORD) ->
+        constructor: (@_serviceContract, @amqpurl = process.env.AMQP_URL, @username = process.env.AMQP_USERNAME, @password = process.env.AMQP_PASSWORD, @HoSPush = 'HoSPush', @HoSPull = 'HoSPull') ->
             @HoSConsumers = []
             @_messagesToReply = {}
             super()

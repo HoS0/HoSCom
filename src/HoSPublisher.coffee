@@ -23,12 +23,11 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                 ch.on "error", () =>
                     isClosed = true
                 @publishChannel = ch
-                @publishChannel.assertExchange("HoS", 'topic', {durable: true})
+                @publishChannel.assertExchange(@_HoSCom.HoSPush, 'topic', {durable: true})
 
             connectionOk.catch (err)=>
                 @isClosed = true
                 @emit('error', err)
-
 
         send: (paylaod, destination, headers, isReplyNeeded)->
             return new Promise (fullfil, reject)=>
@@ -44,7 +43,7 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                     sendOption.replyTo = "#{@_serviceContract.name}.#{@_serviceId}"
                     @_HoSCom._messagesToReply[sendOption.correlationId] = {fullfil: fullfil, reject: reject}
 
-                @publishChannel.publish("HoS", key, new Buffer(JSON.stringify paylaod),sendOption)
+                @publishChannel.publish(@_HoSCom.HoSPush, key, new Buffer(JSON.stringify paylaod),sendOption)
 
                 if !isReplyNeeded
                     fullfil()
@@ -53,4 +52,4 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
             sendOption = {messageId: uuid.v1(), timestamp: message.properties.timestamp, headers: message.properties.headers}
             sendOption.correlationId = message.properties.correlationId
 
-            @publishChannel.publish("HoS", message.properties.replyTo, new Buffer(JSON.stringify payload),sendOption)
+            @publishChannel.publish(@_HoSCom.HoSPush, message.properties.replyTo, new Buffer(JSON.stringify payload),sendOption)

@@ -39,7 +39,7 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
 
         _CreatServiceExchange: ()->
             if @consumeChannel
-                HoSExOk = @consumeChannel.assertExchange("HoS", 'topic', {durable: true})
+                HoSExOk = @consumeChannel.assertExchange(@_HoSCom.HoSPull, 'topic', {durable: true})
                 HoSExOk.then ()=>
                     ok = @consumeChannel.assertExchange(@_serviceContract.name, 'topic', @_options)
                     ok.then ()=>

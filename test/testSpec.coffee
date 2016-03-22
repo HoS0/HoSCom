@@ -32,11 +32,11 @@ describe "Check basic operations", ()->
     beforeEach ()->
         @serviceCon = JSON.parse(JSON.stringify(generalContract))
         @serviceCon.name = "serviceTest#{crypto.randomBytes(4).toString('hex')}"
-        @serviceOne = new HosCom @serviceCon, amqpurl, username, password
+        @serviceOne = new HosCom @serviceCon, amqpurl, username, password, 'HoS', 'HoS'
 
         @serviceCon2 = JSON.parse(JSON.stringify(generalContract))
         @serviceCon2.name = "serviceTest#{crypto.randomBytes(4).toString('hex')}"
-        @serviceTwo = new HosCom @serviceCon2, amqpurl, username, password
+        @serviceTwo = new HosCom @serviceCon2, amqpurl, username, password, 'HoS', 'HoS'
 
     afterEach ()->
         @serviceOne.destroy()
