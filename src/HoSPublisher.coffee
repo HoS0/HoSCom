@@ -1,5 +1,5 @@
 module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) ->
-    class HoSConsumer extends EventEmitter
+    class HoSPublisher extends EventEmitter
         _amqpConnection: null
 
         constructor: (@_HoSCom, @amqpurl = process.env.AMQP_URL, @username = process.env.AMQP_USERNAME, @password = process.env.AMQP_PASSWORD) ->

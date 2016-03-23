@@ -1,6 +1,3 @@
-class AckMessage
-    ack: null
-
 module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) ->
     class HoSConsumer extends EventEmitter
         _amqpConnection: null
