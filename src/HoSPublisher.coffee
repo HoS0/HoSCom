@@ -50,7 +50,7 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                     fullfil()
 
         sendReply: (message, payload)->
-            sendOption = {messageId: uuid.v1(), timestamp: message.properties.timestamp, headers: message.properties.headers}
+            sendOption = {messageId: uuid.v1(), timestamp: message.properties.timestamp, headers: message.properties.headers, contentType: 'application/json'}
             sendOption.correlationId = message.properties.correlationId
 
             @publishChannel.publish(@_HoSCom.HoSPush, message.properties.replyTo, new Buffer(JSON.stringify payload),sendOption)
