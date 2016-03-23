@@ -41,7 +41,7 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                     ok = @consumeChannel.assertExchange(@_serviceContract.name, 'topic', @_options)
                     ok.then ()=>
                         res = []
-                        res.push @consumeChannel.bindExchange(@_serviceContract.name,"HoS","#{@_serviceContract.name}.#")
+                        res.push @consumeChannel.bindExchange(@_serviceContract.name,@_HoSCom.HoSPull,"#{@_serviceContract.name}.#")
                         res.push @_CreateQueue "#{@_serviceContract.name}.#{@_serviceId}", "#{@_serviceContract.name}", @_serviceId
                         res.push @_CreateQueue "#{@_serviceContract.name}", "#{@_serviceContract.name}"
 
