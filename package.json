@@ -1,6 +1,6 @@
 {
   "name": "hos-com",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Communication unit for HoS environment.",
   "main": "index.js",
   "scripts": {
