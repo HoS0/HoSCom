@@ -85,5 +85,6 @@ serviceInfo =
   tasks: tasks
   prefetch: 1
   consumerNumber: 1
+  messageTimeout: 300
 
 module.exports = serviceInfo

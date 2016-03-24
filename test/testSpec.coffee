@@ -45,14 +45,15 @@ describe "Check basic operations", ()->
     it "and it should get all the promisses to connect into rabbitMQ", (done)->
         @serviceOne.connect().then ()=>
             @serviceTwo.connect().then ()=>
-                for i in [ 1 .. 100 ]
-                    @serviceTwo.sendMessage {foo: "bar"} , @serviceCon.name, {task: 'users', method: 'GET'}
+                for i in [ 0 .. 1000 ]
+                    @serviceTwo.sendMessage {foo: "bar"} , @serviceCon.name, {task: 'users', method: 'GET'}, false
+
 
         count = 0
         @serviceOne.on 'users.GET', (msg)=>
-            msg.reply()
+            msg.reply(msg.content)
             count = count + 1
-            if count is 100
+            if count is 1000
                 done()
 
 
@@ -109,3 +110,13 @@ describe "Check basic operations", ()->
         @serviceOne.on 'users.GET', (msg)=>
             msg.content.foo = msg.content.foo + 1
             msg.reject('internal issue', 501)
+
+    it "and it sends a message non-existence service and get time out", (done)->
+        @serviceOne.connect().then ()=>
+            @serviceTwo.connect().then ()=>
+                @serviceTwo.sendMessage({foo: 1} , "non-existence", {task: 'users', method: 'GET'})
+                .then (replyPayload)=>
+                    console.log replyPayload
+                .catch (error)=>
+                    expect(error.code).toEqual(404);
+                    done()

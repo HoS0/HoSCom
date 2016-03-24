@@ -18,7 +18,6 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
             connectionOk.catch (err)=>
                 @isClosed = true
                 @emit('error', err)
-                reject()
 
             connectionOk.then (conn)=>
                 @_amqpConnection = conn
@@ -74,7 +73,7 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                 if payload and msg.properties.replyTo
                     @_HoSCom.Publisher.sendReply(msg, payload)
 
-            msg.reject = (reason, code = 500)=>
+            msg.reject = (reason = "failed", code = 500)=>
                 @consumeChannel.ack(msg)
                 msg.properties.headers.error = code
                 msg.properties.headers.errorMessage = reason
@@ -85,6 +84,8 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
 
         _processRepliedMessage: (msg)->
             if @_HoSCom._messagesToReply[msg.properties.correlationId]
+                if @_HoSCom._messagesToReply[msg.properties.correlationId].timeout
+                    clearTimeout @_HoSCom._messagesToReply[msg.properties.correlationId].timeout
                 @consumeChannel.ack(msg)
                 rep = @_HoSCom._messagesToReply[msg.properties.correlationId]
                 if typeof rep.fullfil is 'function'
