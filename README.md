@@ -59,6 +59,7 @@ msg.reply(msg.content)
 
 message can be rejected `msg.reject('internal issue', 501)` default value for error code is `500`.
 
+Note: for using the current package you have to have a running HoSAuth service to authenticate validation of the packages, for more info please refer to [HoSAuth](https://github.com/HoS0/HoSAuth)
 
 ## Running Tests
 
