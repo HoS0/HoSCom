@@ -1,6 +1,6 @@
 {
   "name": "hos-com",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Communication unit for HoS environment.",
   "main": "index.js",
   "scripts": {
@@ -22,8 +22,9 @@
   "dependencies": {
     "amqplib": "^0.4.1",
     "bluebird": "^3.3.4",
-    "urlsafe-base64": "^1.0.0",
-    "node-uuid": "^1.4.7"
+    "coffee-script": "^1.10.0",
+    "node-uuid": "^1.4.7",
+    "urlsafe-base64": "^1.0.0"
   },
   "devDependencies": {
     "coffee-script": "^1.10.0",
