@@ -35,13 +35,13 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                 destinationParts = destination.split '.'
                 destService = destinationParts[0]
                 sendOption.correlationId = sendOption.messageId
-                sendOption.appId = "#{@_serviceContract.name}.#{@_serviceId}"
+                sendOption.appId = "#{@_serviceContract.serviceDoc.basePath}.#{@_serviceId}"
 
                 key = "#{destService}"
                 key += ".#{destinationParts[1]}" if destinationParts[1]
 
                 if isReplyNeeded
-                    sendOption.replyTo = "#{@_serviceContract.name}.#{@_serviceId}"
+                    sendOption.replyTo = "#{@_serviceContract.serviceDoc.basePath}.#{@_serviceId}"
                     @_HoSCom._messagesToReply[sendOption.correlationId] = {fullfil: fullfil, reject: reject}
                     if @_serviceContract.messageTimeout
                         tick= ()=>

@@ -15,7 +15,7 @@ describe "Create service", ()->
         # create different services
         for i in [0 .. 10]
             serviceCon = JSON.parse(JSON.stringify(generalContract))
-            serviceCon.name = "serviceTest#{i}"
+            serviceCon.serviceDoc.basePath = "serviceTest#{i}"
 
             # create different instances for each service
             for i in [0 .. 5]
@@ -31,11 +31,11 @@ describe "Create service", ()->
 describe "Check basic operations", ()->
     beforeEach ()->
         @serviceCon = JSON.parse(JSON.stringify(generalContract))
-        @serviceCon.name = "serviceTest#{crypto.randomBytes(4).toString('hex')}"
+        @serviceCon.serviceDoc.basePath = "/serviceTest#{crypto.randomBytes(4).toString('hex')}"
         @serviceOne = new HosCom @serviceCon, amqpurl, username, password, 'HoS', 'HoS'
 
         @serviceCon2 = JSON.parse(JSON.stringify(generalContract))
-        @serviceCon2.name = "serviceTest#{crypto.randomBytes(4).toString('hex')}"
+        @serviceCon.serviceDoc.basePath = "serviceTest#{crypto.randomBytes(4).toString('hex')}"
         @serviceTwo = new HosCom @serviceCon2, amqpurl, username, password, 'HoS', 'HoS'
 
     afterEach ()->
@@ -46,11 +46,11 @@ describe "Check basic operations", ()->
         @serviceOne.connect().then ()=>
             @serviceTwo.connect().then ()=>
                 for i in [ 0 .. 1000 ]
-                    @serviceTwo.sendMessage {foo: "bar"} , @serviceCon.name, {task: 'users', method: 'GET'}, false
+                    @serviceTwo.sendMessage {foo: "bar"} , @serviceCon.serviceDoc.basePath, {task: '/users', method: 'get'}, false
 
 
         count = 0
-        @serviceOne.on 'users.GET', (msg)=>
+        @serviceOne.on '/users.get', (msg)=>
             msg.reply(msg.content)
             count = count + 1
             if count is 1000
@@ -60,36 +60,36 @@ describe "Check basic operations", ()->
     it "and it sends a message and get the reply", (done)->
         @serviceOne.connect().then ()=>
             @serviceTwo.connect().then ()=>
-                @serviceTwo.sendMessage({foo: "bar"} , @serviceCon.name, {task: 'users', method: 'GET'}).then (replyPayload)=>
+                @serviceTwo.sendMessage({foo: "bar"} , @serviceCon.serviceDoc.basePath, {task: '/users', method: 'get'}).then (replyPayload)=>
                     expect(replyPayload.foo).toEqual('notbar');
                     done()
 
-        @serviceOne.on 'users.GET', (msg)=>
+        @serviceOne.on '/users.get', (msg)=>
             msg.reply({foo: "notbar"})
 
 
     it "and it sends a message have the reply plus one", (done)->
         @serviceOne.connect().then ()=>
             @serviceTwo.connect().then ()=>
-                @serviceTwo.sendMessage({foo: 1} , @serviceCon.name, {task: 'users', method: 'GET'}).then (replyPayload)=>
+                @serviceTwo.sendMessage({foo: 1} , @serviceCon.serviceDoc.basePath, {task: '/users', method: 'get'}).then (replyPayload)=>
                     expect(replyPayload.foo).toEqual(2);
                     done()
 
-        @serviceOne.on 'users.GET', (msg)=>
+        @serviceOne.on '/users.get', (msg)=>
             msg.content.foo = msg.content.foo + 1
             msg.reply(msg.content)
 
     it "and get the other service contract", (done)->
         @serviceOne.connect().then ()=>
             @serviceTwo.connect().then ()=>
-                @serviceTwo.sendMessage({} , @serviceCon.name, {task: 'contract', method: 'GET'}).then (replyPayload)=>
+                @serviceTwo.sendMessage({} , @serviceCon.serviceDoc.basePath, {task: 'contract', method: 'get'}).then (replyPayload)=>
                     expect(JSON.stringify replyPayload).toEqual(JSON.stringify @serviceCon);
                     done()
 
     it "and get an error on reply for non-existence task", (done)->
         @serviceOne.connect().then ()=>
             @serviceTwo.connect().then ()=>
-                @serviceTwo.sendMessage({} , @serviceCon.name, {task: 'nonexistence', method: 'GET'})
+                @serviceTwo.sendMessage({} , @serviceCon.serviceDoc.basePath, {task: 'nonexistence', method: 'get'})
                 .then (replyPayload)=>
                     console.log replyPayload
                 .catch (error)=>
@@ -99,7 +99,7 @@ describe "Check basic operations", ()->
     it "and it sends a message reject in for internal reason", (done)->
         @serviceOne.connect().then ()=>
             @serviceTwo.connect().then ()=>
-                @serviceTwo.sendMessage({foo: 1} , @serviceCon.name, {task: 'users', method: 'GET'})
+                @serviceTwo.sendMessage({foo: 1} , @serviceCon.serviceDoc.basePath, {task: '/user', method: 'get'})
                 .then (replyPayload)=>
                     console.log replyPayload
                 .catch (error)=>
@@ -107,14 +107,14 @@ describe "Check basic operations", ()->
                     expect(error.reason).toEqual('internal issue');
                     done()
 
-        @serviceOne.on 'users.GET', (msg)=>
+        @serviceOne.on '/user.get', (msg)=>
             msg.content.foo = msg.content.foo + 1
             msg.reject('internal issue', 501)
 
     it "and it sends a message non-existence service and get time out", (done)->
         @serviceOne.connect().then ()=>
             @serviceTwo.connect().then ()=>
-                @serviceTwo.sendMessage({foo: 1} , "non-existence", {task: 'users', method: 'GET'})
+                @serviceTwo.sendMessage({foo: 1} , "non-existence", {task: '/users', method: 'get'})
                 .then (replyPayload)=>
                     console.log replyPayload
                 .catch (error)=>

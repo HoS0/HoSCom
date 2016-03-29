@@ -37,12 +37,12 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
             if @consumeChannel
                 HoSExOk = @consumeChannel.assertExchange(@_HoSCom.HoSPull, 'topic', {durable: true})
                 HoSExOk.then ()=>
-                    ok = @consumeChannel.assertExchange(@_serviceContract.name, 'topic', @_options)
+                    ok = @consumeChannel.assertExchange(@_serviceContract.serviceDoc.basePath, 'topic', @_options)
                     ok.then ()=>
                         res = []
-                        res.push @consumeChannel.bindExchange(@_serviceContract.name,@_HoSCom.HoSPull,"#{@_serviceContract.name}.#")
-                        res.push @_CreateQueue "#{@_serviceContract.name}.#{@_serviceId}", "#{@_serviceContract.name}", @_serviceId
-                        res.push @_CreateQueue "#{@_serviceContract.name}", "#{@_serviceContract.name}"
+                        res.push @consumeChannel.bindExchange(@_serviceContract.serviceDoc.basePath,@_HoSCom.HoSPull,"#{@_serviceContract.serviceDoc.basePath}.#")
+                        res.push @_CreateQueue "#{@_serviceContract.serviceDoc.basePath}.#{@_serviceId}", "#{@_serviceContract.serviceDoc.basePath}", @_serviceId
+                        res.push @_CreateQueue "#{@_serviceContract.serviceDoc.basePath}", "#{@_serviceContract.serviceDoc.basePath}"
 
                         Promise.all(res)
             else
@@ -55,8 +55,8 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                 if id
                     bindingKey += ".#{id}"
 
-                @consumeChannel.bindQueue(queueName, @_serviceContract.name, bindingKey).then ()=>
-                    @consumeChannel.bindQueue(queueName, @_serviceContract.name, "#{bindingKey}.broadcast").then ()=>
+                @consumeChannel.bindQueue(queueName, @_serviceContract.serviceDoc.basePath, bindingKey).then ()=>
+                    @consumeChannel.bindQueue(queueName, @_serviceContract.serviceDoc.basePath, "#{bindingKey}.broadcast").then ()=>
                         pm = (msg)=>
                             @_processMessage(msg)
                         @consumeChannel.consume(queueName, pm)
