@@ -20,10 +20,11 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
             @_serviceId = URLSafeBase64.encode(new Buffer(JSON.stringify ServiceInfo))
 
             @_paths = []
-            for path in Object.keys(@_serviceContract.serviceDoc.paths)
-                pathToPush = path.replace(/(\{.*?\}) */g, '')
-                pathToPush = pathToPush.replace(/\//g, '');
-                @_paths.push pathToPush
+            if @_serviceContract.serviceDoc.paths
+                for path in Object.keys(@_serviceContract.serviceDoc.paths)
+                    pathToPush = path.replace(/(\{.*?\}) */g, '')
+                    pathToPush = pathToPush.replace(/\//g, '');
+                    @_paths.push pathToPush
 
         connect: ()->
             promises = []
