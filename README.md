@@ -11,6 +11,8 @@ requirement:
 
 Each service in HoS environment need to have a contract suitable to its needs, please find the example of a contract in [test/serviceContract](https://github.com/HoS0/HoSCom/blob/master/test/serviceContract.coffee)
 
+In HoS we love [swagger](http://swagger.io/). before developing your service you need to write your documentation ether in swagger or other tools like [API bluepring](https://apiary.io/) and convert it to swagger JSON and includes it in your service contract, note that other service will send messages to each other base on `basePath` they should start with `/`, which in each service should be unique, tasks are in `paths` and also should start with `/`.
+
 Creating an instance of the service:
 
 ``` coffee-script
@@ -32,7 +34,7 @@ or when initializing the service pass as input argument: `HoSService = new HosCo
 `connect()` return a promise for getting connected into HoS environment. after initialization you can send message to other services:
 
 ``` coffee-script
-ok = HoSService.sendMessage {foo: "1"} , "ServiceName", {task: 'TaskName', method: 'METHOD'}
+ok = HoSService.sendMessage {foo: "1"} , "/ServiceName", {task: '/TaskName', method: 'method'}
 ```
 
 by default by sending message HoSCom will assume you expect to get a response back in case you do not need a reply you can specify by passing `false` as the last argument of `sendMessage`, `sendMessage` returns a promise which contain the reply message if successful and error in `catch` if the request failed
@@ -47,7 +49,7 @@ ok.catch (error)=>
 and according to your service contract `HoSCom` will emit the incoming message events:
 
 ``` coffee-script
-HoSService.on 'TaskName.METHOD', (msg)=>
+HoSService.on '/TaskName.method', (msg)=>
 ```
 
 A message should be replied or rejected, ether with content or without content(in which case the reply won't be send to requester but just allows the HoSCom to acknowledge the message and free service queue in rabbitMQ)
