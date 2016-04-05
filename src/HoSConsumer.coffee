@@ -92,7 +92,11 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                     if msg.properties.headers.error
                         rep.reject({code: msg.properties.headers.error,reason: msg.properties.headers.errorMessage})
                     else
-                        rep.fullfil(JSON.parse msg.content)
+                        if msg.properties and msg.properties.headers and msg.properties.headers.replyWholeMessage
+                            msg.content = JSON.parse msg.content
+                            rep.fullfil(msg)
+                        else
+                            rep.fullfil(JSON.parse msg.content)
 
                     delete @_HoSCom._messagesToReply[msg.properties.correlationId]
                     return true

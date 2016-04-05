@@ -120,3 +120,16 @@ describe "Check basic operations", ()->
                 .catch (error)=>
                     expect(error.code).toEqual(404);
                     done()
+
+    it "and it sends a message add a header", (done)->
+        @serviceOne.connect().then ()=>
+            @serviceTwo.connect().then ()=>
+                @serviceTwo.sendMessage({foo: "bar"} , @serviceCon.serviceDoc.basePath, {task: '/users', method: 'get', replyWholeMessage: true}).then (msg)=>
+                    expect(msg.content.foo).toEqual('notbar');
+                    expect(msg.properties.headers.test.foo).toEqual("bar")
+                    console.log msg.properties.headers
+                    done()
+
+        @serviceOne.on '/users.get', (msg)=>
+            msg.properties.headers.test = {foo: "bar"}
+            msg.reply({foo: "notbar"})
