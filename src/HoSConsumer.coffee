@@ -69,6 +69,8 @@ module.exports = (amqp, os, crypto, EventEmitter, URLSafeBase64, uuid, Promise) 
                 msg.content = JSON.parse msg.content
 
             msg.reply = (payload)=>
+                if !payload
+                    payload = {}
                 @consumeChannel.ack(msg)
                 if payload and msg.properties.replyTo
                     @_HoSCom.Publisher.sendReply(msg, payload)
