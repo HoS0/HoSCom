@@ -1,3 +1,5 @@
+![build status](https://travis-ci.org/HoS0/HoSCom.svg?branch=master)
+
 # HoSCom
 
 Communication module for HoS services.
